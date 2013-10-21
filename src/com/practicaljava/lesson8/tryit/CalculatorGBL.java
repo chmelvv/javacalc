@@ -448,8 +448,7 @@ public class CalculatorGBL {
 		buttonEqual = new JButton("=");
 		buttonEqual.addActionListener(calcEngine);
 		gb.setConstraints(buttonEqual, constr);
-		windowContent.add(buttonEqual);
-		
+		windowContent.add(buttonEqual);	
 		JFrame frame = new JFrame("Calculator");
 		frame.setContentPane(windowContent);
 		frame.pack();

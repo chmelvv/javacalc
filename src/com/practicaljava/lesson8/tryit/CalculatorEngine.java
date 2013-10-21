@@ -6,11 +6,26 @@ import javax.swing.*;
 public class CalculatorEngine implements ActionListener {
 	
 	CalculatorGBL parent;
-	private double dFirst, dSecond;
-	private String sFirst="";
+	private Double dOperand1, dOperand2;
+	private String text="";
+	char sign='+'; //Operand sign
+	Boolean itext1Entered=false;
+    Boolean isPoint=false; //is "." exist in operand
+    Boolean isDivide, isMultiply, isAdd, isSubstruct, isPercent;
+     
 
 	CalculatorEngine(CalculatorGBL parent){
 		this.parent = parent;
+	}
+	
+	void show(String str){
+		// Output operand
+		if (sign == '+') {
+			parent.setDisplayValue(str);
+		}
+		else {
+			parent.setDisplayValue(sign + str);
+		}
 	}
 	
 	@Override
@@ -29,17 +44,80 @@ public class CalculatorEngine implements ActionListener {
 			case "7":
 			case "8":
 			case "9":
-			case ".":
-				sFirst += label;
+				text += label;
+				show(text);
 				break;
+			
+			case ".":
+				if (!isPoint) {
+					text += label;
+					isPoint=true;
+				}
+				show(text);
+				break;
+			
+			case "+/-":
+				sign = (sign == '+')? '-' : '+';
+				show(text);
+				break;
+				
 			case "Backspace":
-				if ( !sFirst.isEmpty() ) {
-					 sFirst = sFirst.substring(0, sFirst.length()-1);
+			case "C":
+				if ( !text.isEmpty() ) {
+					 text = text.substring(0, text.length()-1);
+				} else if (sign == '-') {sign='+';}
+				show(text);
+				break;
+			
+			case "CE":
+				text="";
+				sign='+';
+				show(text);
+				break;
+				
+			case "/":
+				if (!itext1Entered) {
+//					dOperand1 = Double.parseDouble(sign+text);
+//					itext1Entered=true;
+//					text="";
+//					sign='+';
+//					isPoint=false;
+//					isDivide = true;
+//					show(text);
+				} else { // "/" <=> "="
+//					dOperand1 = dOperand1 / Double.parseDouble(sign+text);
+//					text = dOperand1.toString();
+//					dOperand2 = null;
+//					itext1Entered=true;
+//					show(text);
 				}
 				break;
+			case "=":
+				if (itext1Entered) {
+//					dOperand2 = Double.parseDouble(sign+text);
+//					if (isDivide) { 
+//						dOperand1 = dOperand1 / Double.parseDouble(sign+text);
+//						text = dOperand1.toString();
+//						dOperand2 = null;
+//						itext1Entered=true;
+//						isDivide=false;
+//						show(text);
+//						}
+				} else {
+					isDivide = false;
+					isMultiply = false;
+					isAdd = false;
+					isSubstruct = false;
+					isPercent = false;
+					
+					show(text);
+					text = "";
+					isPoint = false;
+					
+				}
+				break;
+				
 		}
-		parent.setDisplayValue(sFirst);
+		}
 		
 	}
-
-}

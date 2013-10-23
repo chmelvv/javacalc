@@ -462,6 +462,11 @@ public class CalculatorGBL {
 	public String getDisplayValue(){
 		return displayField.getText();
 	}
+	
+	public void setMemoryValue(Double mem){
+		emptyField.setText(mem.toString());
+	}
+
 	  
 	public static void main(String[] args) {
 		new CalculatorGBL();

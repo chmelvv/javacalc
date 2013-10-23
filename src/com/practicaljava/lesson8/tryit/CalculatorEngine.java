@@ -8,14 +8,13 @@ public class CalculatorEngine implements ActionListener {
 	CalculatorGBL parent;
 	private Double dOperand1, dOperand2;
 	private String text="";
-	char sign='+'; //Operand sign
-	Boolean isText1Entered=false;
-    Boolean isPoint=false; //is "." exist in operand
-    Boolean isDivide=false, isMultiply=false, isAdd=false, isSubstract=false, isPercent=false;
-    Boolean isNumberOnlyEntered=false;
-     
+	private char sign='+'; //Operand sign
+	private Boolean isText1Entered=false;
+	private Boolean isPoint=false; //is "." exist in operand
+	private Boolean isDivide=false, isMultiply=false, isAdd=false, isSubstract=false, isPercent=false;
+    private Double memory=0.0;
 
-	CalculatorEngine(CalculatorGBL parent){
+    CalculatorEngine(CalculatorGBL parent){
 		this.parent = parent;
 	}
 	
@@ -88,6 +87,20 @@ public class CalculatorEngine implements ActionListener {
 		sign='+';
 		text="";
 	}
+	
+	void percent(){
+		dOperand2 = Double.parseDouble(sign+text);
+		dOperand1 = dOperand1*dOperand2/100;
+		text = Double.toString(dOperand1);
+		show(text);
+	
+		dOperand2 = null;
+		isPercent=false;
+		isText1Entered = false;
+		isPoint=false;
+		sign='+';
+		text="";
+	}
 
 	
 	@Override
@@ -106,17 +119,8 @@ public class CalculatorEngine implements ActionListener {
 			case "7":
 			case "8":
 			case "9":
-				if (!isNumberOnlyEntered) {
-					text += label;
-					show(text);
-				} else {
-					text=label;
-					isPoint=false;
-					sign='+';
-					isNumberOnlyEntered=false;
-					isText1Entered=false;
-					show(text);
-				}
+				text += label;
+				show(text);
 				break;
 			
 			case ".":
@@ -174,7 +178,7 @@ public class CalculatorEngine implements ActionListener {
 					sign='+';
 					text="";
 				} else { // "/" <=> "="
-					divide();				}
+					show("Error");  	}
 				break;
 
 			case "*":
@@ -187,7 +191,7 @@ public class CalculatorEngine implements ActionListener {
 					sign='+';
 					text="";
 				} else { // "/" <=> "="
-					multiply();				}
+					show("Error");		}
 				break;
 
 			case "-":
@@ -200,7 +204,7 @@ public class CalculatorEngine implements ActionListener {
 					sign='+';
 					text="";
 				} else { // "/" <=> "="
-					substract();				}
+					show("Error");		}
 				break;
 				
 			case "+":
@@ -213,27 +217,73 @@ public class CalculatorEngine implements ActionListener {
 					sign='+';
 					text="";
 				} else { // "/" <=> "="
-					add();				}
+					show("Error");			}
+				break;
+
+			case "%":
+				if (!isText1Entered) {
+					dOperand1 = Double.parseDouble(sign+text);
+					isText1Entered=true;
+
+					isPercent = true;
+					isPoint=false;
+					sign='+';
+					text="";
+				} else { // "/" <=> "="
+					show("Error");			}
 				break;
 
 			case "=":
 				if (isText1Entered) {// Case "N op M ="
 					dOperand2 = Double.parseDouble(sign+text);
-					if (isDivide) { divide(); } 
-					if (isMultiply) { multiply(); }
-					if (isSubstract) { substract(); }
-					if (isAdd) { add(); }
+					if (isDivide) divide(); 
+					if (isMultiply) multiply();
+					if (isSubstract) substract();
+					if (isAdd) add();
+					if (isPercent) percent();
 					isText1Entered = false;
 					
 				} else { // Case "N ="
-					dOperand1 = Double.parseDouble(sign+text);
-					isText1Entered=true;
-					show(text);
-					isNumberOnlyEntered=true; // Case when typed "N=M" must be equals "M"
+					show("Error");
 				}
 				break;
 				
+			case "sqrt":
+					dOperand1 = Math.sqrt(Double.parseDouble(sign+text));
+					text = Double.toString(dOperand1);
+					show(text);
+
+					isPoint=false;
+					sign='+';
+					text="";
+					break;
+			
+			case "1/x":
+				dOperand1 = 1/Double.parseDouble(sign+text);
+				text = Double.toString(dOperand1);
+				show(text);
+
+				isPoint=false;
+				sign='+';
+				text="";
+				break;
+				
+			case "MC":
+				memory = 0.0;
+				parent.setMemoryValue(memory);
+				break;
+			case "MR":
+				text = memory.toString();
+				show(text);
+				break;
+			case "MS":
+				memory = Double.parseDouble(text);
+				parent.setMemoryValue(memory);
+				break;
+			case "M+":
+				memory += Double.parseDouble(text);
+				parent.setMemoryValue(memory);
+				break;
 		}
 		}
-		
-	}
+}
